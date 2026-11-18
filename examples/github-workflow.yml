@@ -1,0 +1,29 @@
+# Example workflow: copy to .github/workflows/mycrobo.yml in the repository you want reviewed.
+# (Kept out of .github/ here on purpose, so this repo doesn't run it until you decide to.)
+name: MyCrobo
+
+on:
+  pull_request:
+
+permissions:
+  contents: read          # check out the code
+  pull-requests: write    # inline review comments + summary comment
+  security-events: write  # upload SARIF to code scanning
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history so the PR diff (merge-base) can be computed
+
+      # In MyCrobo's own repository use `uses: ./`; elsewhere use `<owner>/<repo>@<ref>`
+      # of wherever MyCrobo is published.
+      - uses: ./
+        with:
+          fail-on: high
+          # Optional Claude review of the changed files (costs API credits, capped by max-cost):
+          # ai: true
+          # anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # max-cost: "0.50"

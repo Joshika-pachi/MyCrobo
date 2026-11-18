@@ -1,0 +1,40 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "6b49d082fa96",
+      "verdict": "confirmed",
+      "severity": "medium",
+      "explanation": "The comment concedes reports are written to local disk as a stop-gap; on ephemeral or multi-instance workers the file is lost or served from the wrong host.",
+      "suggested_fix": "Upload the rendered PDF to object storage and return its key or URL, then delete the comment."
+    },
+    {
+      "finding_id": "f356edb6db29",
+      "verdict": "confirmed",
+      "severity": "low",
+      "explanation": "report_title() returns filler text, so every generated report ships with a lorem ipsum title.",
+      "suggested_fix": "Build the title from the report period, e.g. f\"Sales report {month:%B %Y}\"."
+    }
+  ],
+  "new_issues": [
+    {
+      "category": "security",
+      "title": "Shell command injection through the report filename",
+      "severity": "critical",
+      "line_start": 8,
+      "line_end": 8,
+      "evidence": "subprocess.run(f\"convert {filename} /tmp/report.pdf\", shell=True, check=True)",
+      "explanation": "filename is interpolated into a shell command with shell=True; a name like 'x; rm -rf ~' runs arbitrary commands as the worker.",
+      "suggested_fix": "Pass an argument list without a shell: subprocess.run([\"convert\", filename, out_path], check=True)."
+    },
+    {
+      "category": "coding_gaps",
+      "title": "All reports share one fixed /tmp path",
+      "severity": "medium",
+      "line_start": 9,
+      "line_end": 9,
+      "evidence": "return \"/tmp/report.pdf\"",
+      "explanation": "Concurrent jobs overwrite each other's output, and a predictable path in /tmp can be pre-created as a symlink by another local user.",
+      "suggested_fix": "Create a unique file with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) and return that path."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "9c95839643ef",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "The FIXME admits the bastion security group was opened to the world and never locked down; this is a live exposure, not a note.",
+      "suggested_fix": "Restrict cidr_blocks to the office/VPN ranges (or use SSM Session Manager and drop port 22), then remove the FIXME."
+    }
+  ],
+  "new_issues": [
+    {
+      "category": "security",
+      "title": "SSH (port 22) open to the entire internet",
+      "severity": "critical",
+      "line_start": 9,
+      "line_end": 9,
+      "evidence": "cidr_blocks = [\"0.0.0.0/0\"]",
+      "explanation": "Ingress on 22/tcp from 0.0.0.0/0 exposes the bastion to internet-wide SSH brute forcing and any OpenSSH vulnerability.",
+      "suggested_fix": "Replace 0.0.0.0/0 with a variable listing trusted CIDRs, or remove the ingress rule and use AWS SSM Session Manager."
+    }
+  ]
+}

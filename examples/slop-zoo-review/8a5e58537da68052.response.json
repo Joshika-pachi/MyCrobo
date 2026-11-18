@@ -1,0 +1,44 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "5a260d12aa78",
+      "verdict": "confirmed",
+      "severity": "low",
+      "explanation": "Without retries a single 429 from the supplier fails the whole nightly sync.",
+      "suggested_fix": "Retry with exponential backoff honouring Retry-After (e.g. urllib3 Retry on a requests Session)."
+    },
+    {
+      "finding_id": "af172f776e29",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "fetch_inventory is declared to return list[Item] but returns None, so sync() never has real data and len(None) raises TypeError.",
+      "suggested_fix": "Implement the supplier call (requests.get(SUPPLIER_URL, params={'since': since}) and map rows to Item), or raise NotImplementedError until it exists."
+    },
+    {
+      "finding_id": "f6f512445660",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "A failed fetch is swallowed, so the job continues with no data and fails later with a misleading error instead of the real cause.",
+      "suggested_fix": "Catch requests.RequestException, log it with context and re-raise (or return 0 explicitly) instead of pass."
+    },
+    {
+      "finding_id": "af1528a841fd",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "breakpoint() in a scheduled job blocks waiting for a debugger; under cron or a worker pool the sync hangs forever.",
+      "suggested_fix": "Remove the breakpoint() call."
+    }
+  ],
+  "new_issues": [
+    {
+      "category": "coding_gaps",
+      "title": "`items` is unbound when the fetch fails",
+      "severity": "high",
+      "line_start": 21,
+      "line_end": 21,
+      "evidence": "return len(items)",
+      "explanation": "If fetch_inventory raises, the except branch swallows it and items is never assigned, so this line raises NameError and hides the original error.",
+      "suggested_fix": "Assign items inside a branch that always runs (e.g. items = [] before the try) or re-raise in the except block."
+    }
+  ]
+}

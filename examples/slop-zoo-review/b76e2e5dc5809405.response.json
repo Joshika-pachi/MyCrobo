@@ -1,0 +1,12 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "603f6354bc2c",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "API_TOKEN is hard-coded while DATABASE_URL beside it is correctly read from the environment.",
+      "suggested_fix": "Use os.environ[\"API_TOKEN\"] like DATABASE_URL, and rotate the exposed token."
+    }
+  ],
+  "new_issues": []
+}

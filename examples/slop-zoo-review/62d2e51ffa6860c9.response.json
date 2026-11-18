@@ -1,0 +1,19 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "9b524851222c",
+      "verdict": "confirmed",
+      "severity": "critical",
+      "explanation": "The production database password is committed inside the connection URL; anyone with repo access can connect to the database.",
+      "suggested_fix": "Read the URL from process.env.DATABASE_URL (as stripeKey already does with its env var), rotate the password, and purge it from git history."
+    },
+    {
+      "finding_id": "5eda5c23d461",
+      "verdict": "confirmed",
+      "severity": "critical",
+      "explanation": "With the JWT signing secret in source, anyone with repo access can mint valid tokens for any user.",
+      "suggested_fix": "Load it from process.env.JWT_SECRET, fail startup if it is missing, and rotate the current secret."
+    }
+  ],
+  "new_issues": []
+}

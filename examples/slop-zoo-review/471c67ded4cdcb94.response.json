@@ -1,0 +1,51 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "8a7f72586538",
+      "verdict": "confirmed",
+      "severity": "low",
+      "explanation": "The comment is stale: the code already computes the total with orderTotal(), so it now misleads readers about whether pricing works.",
+      "suggested_fix": "Delete the comment (or replace it with what is actually still missing)."
+    },
+    {
+      "finding_id": "7c4213e243f0",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "The refund endpoint is routed but always throws; in Express 4 an async handler's rejection is unhandled, so the request hangs and refunds silently never happen.",
+      "suggested_fix": "Implement the refund, or return 501 Not Implemented explicitly until it exists, and don't register the route before then."
+    },
+    {
+      "finding_id": "db0be6d93f57",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "If the INSERT fails the error is discarded and the client still receives 201 with a total: the order is lost while the caller believes it was saved.",
+      "suggested_fix": "Remove the .catch(() => {}); let the error propagate to an error handler that returns 500, or catch it, log it and respond with 500."
+    },
+    {
+      "finding_id": "283f08504061",
+      "verdict": "confirmed",
+      "severity": "medium",
+      "explanation": "Logging the full request body writes customer order data (and potentially personal data) to application logs.",
+      "suggested_fix": "Remove the log line or log only an order id through the project logger."
+    },
+    {
+      "finding_id": "3da0449df4bc",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": "mockOrders is returned for any id that doesn't exist, so clients receive a fabricated order instead of a 404.",
+      "suggested_fix": "Return res.status(404).json({ error: 'order not found' }) when no row exists and delete mockOrders."
+    }
+  ],
+  "new_issues": [
+    {
+      "category": "security",
+      "title": "SQL injection: request parameter interpolated into SQL",
+      "severity": "critical",
+      "line_start": 13,
+      "line_end": 13,
+      "evidence": "const result = await db.query(`SELECT * FROM orders WHERE id = ${req.params.id}`);",
+      "explanation": "req.params.id is inserted into the SQL text, so '1 OR 1=1' or a UNION payload reads or modifies arbitrary data.",
+      "suggested_fix": "Use a parameterised query: db.query(\"SELECT * FROM orders WHERE id = $1\", [req.params.id])."
+    }
+  ]
+}

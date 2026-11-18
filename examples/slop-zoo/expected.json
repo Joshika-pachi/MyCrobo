@@ -1,0 +1,36 @@
+{
+  "description": "Answer key for the slop zoo. Each issue is located by a code snippet (not a line number). 'rule' must match exactly; 'category' entries accept any finding of that category (used for issues only the AI review can find).",
+  "issues": [
+    {"id": "Z01", "file": ".env", "contains": "DB_PASSWORD=", "rule": "security/hardcoded-secret", "detector": "rules", "what": "database password in a committed .env"},
+    {"id": "Z02", "file": ".env", "contains": "DB_PASSWORD=", "rule": "security/committed-env-file", "detector": "rules", "what": ".env with real values is not git-ignored"},
+    {"id": "Z03", "file": "api/src/config.ts", "contains": "databaseUrl:", "rule": "security/hardcoded-secret", "detector": "rules", "what": "password inside the database URL"},
+    {"id": "Z04", "file": "api/src/config.ts", "contains": "jwtSecret:", "rule": "security/hardcoded-secret", "detector": "rules", "what": "hard-coded JWT signing secret"},
+    {"id": "Z05", "file": "worker/settings.py", "contains": "API_TOKEN =", "rule": "security/hardcoded-secret", "detector": "rules", "what": "hard-coded API token"},
+    {"id": "Z06", "file": "api/src/routes/orders.ts", "contains": "const mockOrders = [", "rule": "loose-ends/mock-data", "detector": "rules", "what": "mock orders served as a fallback in production"},
+    {"id": "Z07", "file": "api/src/routes/orders.ts", "contains": "console.log(\"order payload\"", "rule": "loose-ends/debug-statement", "detector": "rules", "what": "request body logged (may contain personal data)"},
+    {"id": "Z08", "file": "api/src/routes/orders.ts", "contains": "// For now, just return", "rule": "slop/placeholder-comment", "detector": "rules", "what": "placeholder comment admits pricing isn't wired up"},
+    {"id": "Z09", "file": "api/src/routes/orders.ts", "contains": ".catch(() => {})", "rule": "loose-ends/swallowed-error", "detector": "rules", "what": "failed order insert silently ignored, client still gets 201"},
+    {"id": "Z10", "file": "api/src/routes/orders.ts", "contains": "throw new Error(\"Not implemented\")", "rule": "loose-ends/stub-implementation", "detector": "rules", "what": "refund endpoint is a stub"},
+    {"id": "Z11", "file": "api/src/routes/users.ts", "contains": "} catch (err) {", "rule": "loose-ends/swallowed-error", "detector": "rules", "what": "empty catch: request hangs with no response on DB error"},
+    {"id": "Z12", "file": "api/src/routes/users.ts", "contains": "// ... rest of the user handlers", "rule": "slop/placeholder-comment", "detector": "rules", "what": "code truncated by an AI edit"},
+    {"id": "Z13", "file": "api/src/utils/totals.ts", "contains": "let total = 0;", "rule": "slop/duplicate-block", "detector": "rules", "what": "orderTotal copy-pasted from cartTotal (tax rates already drifted)"},
+    {"id": "Z14", "file": "worker/jobs/sync.py", "contains": "def fetch_inventory", "rule": "loose-ends/stub-implementation", "detector": "rules", "what": "promises list[Item], returns None"},
+    {"id": "Z15", "file": "worker/jobs/sync.py", "contains": "# TODO: retry on 429", "rule": "loose-ends/marker-comment", "detector": "rules", "what": "missing retry on rate limiting"},
+    {"id": "Z16", "file": "worker/jobs/sync.py", "contains": "except Exception:", "rule": "loose-ends/swallowed-error", "detector": "rules", "what": "fetch failure swallowed"},
+    {"id": "Z17", "file": "worker/jobs/sync.py", "contains": "breakpoint()", "rule": "loose-ends/debug-statement", "detector": "rules", "what": "breakpoint() freezes the nightly job"},
+    {"id": "Z18", "file": "worker/jobs/report.py", "contains": "# In a real app", "rule": "slop/placeholder-comment", "detector": "rules", "what": "placeholder admits the storage design is unfinished"},
+    {"id": "Z19", "file": "worker/jobs/report.py", "contains": "Lorem ipsum dolor", "rule": "loose-ends/mock-data", "detector": "rules", "what": "lorem ipsum report title"},
+    {"id": "Z20", "file": "infra/main.tf", "contains": "# FIXME: opened to the world", "rule": "loose-ends/marker-comment", "detector": "rules", "what": "FIXME on a security group"},
+    {"id": "Z21", "file": "api/src/routes/orders.ts", "contains": "SELECT * FROM orders WHERE id = ${", "category": "security", "detector": "ai", "what": "SQL injection via template literal"},
+    {"id": "Z22", "file": "api/src/routes/users.ts", "contains": "users.delete(", "category": "security", "detector": "ai", "what": "anyone can delete any user: no authentication or ownership check", "line_tolerance": 2},
+    {"id": "Z23", "file": "worker/jobs/report.py", "contains": "shell=True", "category": "security", "detector": "ai", "what": "shell command injection via filename"},
+    {"id": "Z24", "file": "worker/jobs/sync.py", "contains": "return len(items)", "category": "coding_gaps", "detector": "ai", "what": "items is unbound after the swallowed exception: NameError", "line_tolerance": 3},
+    {"id": "Z25", "file": "infra/main.tf", "contains": "0.0.0.0/0", "category": "security", "detector": "ai", "what": "SSH open to the whole internet", "line_tolerance": 5}
+  ],
+  "traps": [
+    "api/tests/orders.test.ts: mock data and console.log inside tests",
+    "api/src/ui/LoginForm.tsx: password input with a placeholder",
+    "worker/jobs/base.py: abstract method raising NotImplementedError, no-op on_success hook",
+    "worker/jobs/parse.py: explained `except KeyError: pass`, PASSWORD_FIELD form-field name"
+  ]
+}

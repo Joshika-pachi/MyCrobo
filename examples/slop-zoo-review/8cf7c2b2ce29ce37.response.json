@@ -1,0 +1,12 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "a6137debb3b6",
+      "verdict": "confirmed",
+      "severity": "medium",
+      "explanation": "orderTotal is a copy of cartTotal in money.ts and the copies have already drifted: one applies 20% tax, the other 25%, so the cart and the order disagree on price.",
+      "suggested_fix": "Keep one implementation (e.g. totalWithTax(items, taxRate)) in money.ts, decide which tax rate is correct, and call it from both places."
+    }
+  ],
+  "new_issues": []
+}

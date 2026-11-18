@@ -1,0 +1,19 @@
+{
+  "verdicts": [
+    {
+      "finding_id": "27507ee089bc",
+      "verdict": "confirmed",
+      "severity": "critical",
+      "explanation": "The database password is committed in plain text in .env.",
+      "suggested_fix": "Remove the value, rotate the password, and provide it through the deployment's secret store."
+    },
+    {
+      "finding_id": "2a0f62d79fb9",
+      "verdict": "confirmed",
+      "severity": "high",
+      "explanation": ".env is part of the repository, so every clone gets the credentials it contains.",
+      "suggested_fix": "Add .env to .gitignore, git rm --cached .env, and commit a .env.example with placeholder values instead."
+    }
+  ],
+  "new_issues": []
+}

@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mycrobo"
+version = "0.1.0"
+description = "Architecture-agnostic review agent for security risks, AI slop, coding gaps and loose ends."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "anthropic>=2.9",
+]
+
+[project.scripts]
+mycrobo = "mycrobo.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mycrobo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.uv]
+# Rebuild the package when sources change, so `uv run --no-editable` never runs stale code.
+cache-keys = [{ file = "pyproject.toml" }, { file = "src/**/*.py" }]

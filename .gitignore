@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.mycrobo-cache/
+mycrobo-report.*
+.DS_Store
+mycrobo.sarif
+*.sarif
+requests.json
+*.zip
